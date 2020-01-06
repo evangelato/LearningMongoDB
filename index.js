@@ -42,6 +42,7 @@ async function updateCourse(id) {
     // findById()
     // Modify its properties
     // save()
+    /*
     const course = await Course.findById(id);
     if (!course) {
         return;
@@ -52,10 +53,18 @@ async function updateCourse(id) {
     });
     const result = await course.save();
     console.log(result);
+    */
 
     // Approach: Update first
     // Update directly
     // Optionally: get the updated document
+    const result = await Course.findByIdAndUpdate(id, {
+      $set: {
+          author: 'Hank',
+          isPublished: false
+      }  
+    }, { new: true});
+    console.log(result);
 }
 
 //createCourse();
