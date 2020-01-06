@@ -67,6 +67,12 @@ async function updateCourse(id) {
     console.log(result);
 }
 
+async function removeCourse(id) {
+   const result = await Course.findByIdAndRemove(id);
+   console.log(result);
+}
+
 //createCourse();
 //getCourses();
-updateCourse('5e12e4f57800f306adf8a774');
+//updateCourse('5e12e4f57800f306adf8a774');
+removeCourse('5e12e4f57800f306adf8a774');
