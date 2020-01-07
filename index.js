@@ -1,29 +1,50 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/playground')
+mongoose.connect('mongodb://localhost/playground', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB...'))
     .catch(err => console.log('Could not connect to MongoDB...', err));
 
 const courseSchema = new mongoose.Schema({
-    name: String,
+    name: { 
+        type: String, 
+        required: true,
+        minLength: 5,
+        maxLength: 255,
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ['web', 'mobile', 'network']
+    },
     author: String,
     tags: [ String ],
     date: { type: Date, default: Date.now },
-    isPublished: Boolean
+    isPublished: Boolean,
+    price: {
+        type: Number,
+        required: function() { return this.isPublished; }
+    }
 });
 
 const Course = mongoose.model('Course', courseSchema);
 
 async function createCourse() {
     const course = new Course({
-        name: 'NodeJS Course',
+        // name: 'NodeJS Course',
         author: 'Evan',
+        category: '-',
         tags: ['nodejs', 'frontend'],
-        isPublished: true
+        isPublished: true,
+        // price: 15
     });
 
-    const result = await course.save();
-    console.log(result);
+    try {
+        const result = await course.save();
+        console.log(result);
+    } catch (err) {
+        console.log(err.message);
+    }
+    
 }
 
 async function getCourses() {
@@ -38,26 +59,6 @@ async function getCourses() {
 }
 
 async function updateCourse(id) {
-    // Approach: Query first
-    // findById()
-    // Modify its properties
-    // save()
-    /*
-    const course = await Course.findById(id);
-    if (!course) {
-        return;
-    }
-    course.set({
-        isPublished: true,
-        author: 'Jim'
-    });
-    const result = await course.save();
-    console.log(result);
-    */
-
-    // Approach: Update first
-    // Update directly
-    // Optionally: get the updated document
     const result = await Course.findByIdAndUpdate(id, {
       $set: {
           author: 'Hank',
@@ -72,7 +73,7 @@ async function removeCourse(id) {
    console.log(result);
 }
 
-//createCourse();
+createCourse();
 //getCourses();
 //updateCourse('5e12e4f57800f306adf8a774');
-removeCourse('5e12e4f57800f306adf8a774');
+//removeCourse('5e12e4f57800f306adf8a774');
